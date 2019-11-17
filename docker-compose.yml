@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+
+  php-fpm:
+    build:
+      context: ./php-fpm
+    volumes:
+      - ${SRC_VOLUME}
+
+  php-cli:
+    build:
+      context: ./php-cli
+    ports:
+      - '2222:22'
+    volumes:
+      - ${SRC_VOLUME}
+    stdin_open: true
+    tty: true
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - php-fpm
+    volumes:
+      - ${SRC_VOLUME}
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - '3306:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  #optional
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    depends_on:
+      - mysql
