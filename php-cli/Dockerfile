@@ -1,8 +1,13 @@
 FROM php:7.2-cli
 
-RUN docker-php-ext-install pdo_mysql
+RUN apt-get update && \
+    apt-get -y install \
+        git \
+        openssh-server \
+        supervisor \
+        mc
 
-RUN apt-get update && apt-get install git openssh-server supervisor mc -y
+RUN docker-php-ext-install pdo_mysql
 
 RUN mkdir -p /var/run/sshd /var/log/supervisor
 
